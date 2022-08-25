@@ -2,9 +2,9 @@
   "name": "thunter-alfresco-data-generator",
   "version": "1.0.0",
   "description": "Generates sets of data to be used for easy Alfresco development",
-  "main": "src/app.ts",
+  "main": "src/main.ts",
   "scripts": {
-    "start": "npx tsc && node dist/app.js",
+    "start": "npx tsc && node dist/main.js",
     "lint": "npx eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,5 +23,8 @@
     "@typescript-eslint/parser": "^5.35.1",
     "eslint": "^8.22.0",
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@types/node": "^18.7.13"
   }
 }
