@@ -1,9 +1,11 @@
 {
   "name": "thunter-alfresco-data-generator",
   "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "description": "Generates sets of data to be used for easy Alfresco development",
+  "main": "src/app.ts",
   "scripts": {
+    "start": "npx tsc && node dist/app.js",
+    "lint": "npx eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/TomikaArome/thunter-alfresco-data-generator/issues"
   },
-  "homepage": "https://github.com/TomikaArome/thunter-alfresco-data-generator#readme"
+  "homepage": "https://github.com/TomikaArome/thunter-alfresco-data-generator#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
+    "eslint": "^8.22.0",
+    "typescript": "^4.7.4"
+  }
 }
