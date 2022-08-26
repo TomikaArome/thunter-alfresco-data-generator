@@ -12,11 +12,15 @@ export class App {
   static async startApp() {
     const app = new App();
     await app.config.readConfigFile();
-    console.log(await app.chooseEnvironment());
+
+    const environment = await app.chooseEnvironment();
+    const user = await app.chooseUser(environment);
+    console.log(environment, user);
   }
 
   async chooseEnvironment(): Promise<Environment> {
     if (this.config.params.environments.length === 0) {
+      console.log('No environments found, register a new one');
       return await this.setupNewEnvironment();
     }
 
@@ -29,7 +33,7 @@ export class App {
       }),
       this.separator,
       {
-        name: 'Setup new environment',
+        name: 'Register new environment:',
         value: 'new'
       }
     ];
@@ -45,6 +49,43 @@ export class App {
     return answers.environment;
   }
 
+  async chooseUser(environment: Environment): Promise<User> {
+    if (environment.users.length === 0) {
+      console.log('No users found, register a new one');
+    }
+    if (environment.users.length > 0) {
+      const userChoices = [
+        ...environment.users.map((user: User) => {
+          return {
+            name: user.username,
+            value: user
+          };
+        }),
+        this.separator,
+        {
+          name: 'Register new user',
+          value: 'new'
+        }
+      ];
+      const answers = await this.prompt([{
+        type: 'list',
+        name: 'user',
+        message: 'Select a user:',
+        choices: userChoices
+      }]);
+      if (answers.user !== 'new') {
+        return answers.user;
+      }
+    }
+
+    const user = await this.promptUserDetails();
+    environment.users.push(user);
+    if (!environment.inMemoryOnly) {
+      await this.config.saveToConfigFile();
+    }
+    return user;
+  }
+
   async setupNewEnvironment(): Promise<Environment> {
     const environment = await this.promptEnvironmentDetails();
     const answers = await this.prompt([
@@ -58,6 +99,8 @@ export class App {
     if (answers.saveToConfigFile) {
       this.config.params.environments.push(environment);
       await this.config.saveToConfigFile();
+    } else {
+      environment.inMemoryOnly = true;
     }
     return environment;
   }
@@ -67,19 +110,18 @@ export class App {
       {
         type: 'input',
         name: 'label',
-        message: 'Enter a label to name your environment'
+        message: 'Enter a label to name your environment:'
       },
       {
         type: 'input',
         name: 'host',
-        message: 'Enter the host of the environment'
+        message: 'Enter the host of the environment:'
       }
     ]);
-    const user = await this.promptUserDetails();
     return {
       label: answers.label,
       host: answers.host,
-      users: [user]
+      users: []
     }
   }
 
@@ -88,12 +130,12 @@ export class App {
       {
         type: 'input',
         name: 'username',
-        message: 'Enter the username'
+        message: 'Enter the username:'
       },
       {
         type: 'password',
         name: 'password',
-        message: 'Enter the password (leave blank to prompt before each operation)',
+        message: 'Enter the password (leave blank to prompt before each operation):',
         mask: '*'
       }
     ]);

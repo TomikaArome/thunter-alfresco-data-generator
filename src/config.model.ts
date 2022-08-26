@@ -8,6 +8,7 @@ export interface Environment {
   label: string;
   host: string;
   users: User[];
+  inMemoryOnly?: true;
 }
 
 export interface ConfigParams {
